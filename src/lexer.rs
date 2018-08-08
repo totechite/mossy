@@ -1,0 +1,55 @@
+use std::io::{BufRead, Cursor};
+use regex::Regex;
+use token::Token;
+
+
+#[derive(Debug)]
+pub struct Lexer {
+    cursor: Cursor<String>,
+    pub line: Option<String>,
+}
+
+impl Lexer {
+
+    pub fn new(src: String) -> Lexer{
+        let mut cursor = Cursor::new(src);
+        let mut buf = String::new();
+        cursor.read_line(&mut buf);
+        Lexer{
+            cursor: cursor,
+            line: Some(buf)
+        }
+    }
+
+    pub fn consume(&mut self) -> &mut Lexer{
+            let mut temp: String = "".to_string();
+            self.cursor.read_line(&mut temp);
+            match temp.as_str(){
+                "" => self.line = None,
+                x => self.line = Some(x.to_string())
+            }
+            self
+    }
+    
+
+
+    pub fn next_line(&mut self) -> Vec<Token>{
+        let mut tokens = vec![];
+        while self.line.clone() != None {
+            let head_line = self.line.clone().unwrap();
+            if Regex::new(r"^(#{1,6})[[:alpha:][0-9]\s]+?\n").unwrap().is_match(head_line.as_str()) {
+                let depth: i8 = Regex::new("#").unwrap().find_iter(head_line.as_str()).count() as i8;
+                let text: String = Regex::new("#").unwrap().replace_all(head_line.as_str(), "").trim().to_string();
+                tokens.push(Token::HEADING{depth: depth,text: text});
+            }else{
+                let text: String = Regex::new(r"\s{3}\n*?$").unwrap().replace_all(head_line.as_str(), "").to_string();
+                tokens.push(Token::PARAGRAPH{text: text});
+            }
+            self.consume();
+        }
+        tokens.push(Token::EOF);
+        tokens
+    }
+
+
+}
