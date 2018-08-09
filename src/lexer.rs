@@ -35,13 +35,22 @@ impl Lexer {
 
     pub fn next_line(&mut self) -> Vec<Token>{
         let mut tokens = vec![];
-        while self.line.clone() != None {
-            let head_line = self.line.clone().unwrap();
-            if Regex::new(r"^(#{1,6})[[:alpha:][0-9]\s]+?\n").unwrap().is_match(head_line.as_str()) {
+        while let Some(head_line) = self.line.clone(){
+            if "\n" == head_line.as_str(){
+
+            }
+            else if Regex::new(r"^(#{1,6})[[:alpha:][0-9]\s]+?\n").unwrap().is_match(head_line.as_str()) {
                 let depth: i8 = Regex::new("#").unwrap().find_iter(head_line.as_str()).count() as i8;
                 let text: String = Regex::new("#").unwrap().replace_all(head_line.as_str(), "").trim().to_string();
                 tokens.push(Token::HEADING{depth: depth,text: text});
-            }else{
+            }
+            else if Regex::new("^(`{3})").unwrap().is_match(head_line.as_str()){
+                let lang: String = Regex::new(r"[[:alpha:][0-9]]$").unwrap().captures(head_line.as_str()).unwrap().get(0).unwrap().as_str().to_string();
+                let code_token = self.code_token(lang);
+                self.consume();
+                tokens.push(code_token);
+            }
+            else{
                 let text: String = Regex::new(r"\s{3}\n*?$").unwrap().replace_all(head_line.as_str(), "").to_string();
                 tokens.push(Token::PARAGRAPH{text: text});
             }
@@ -51,5 +60,15 @@ impl Lexer {
         tokens
     }
 
+    fn code_token(&mut self, lang: String) -> Token{
+        let mut is_code: bool = true;
+        let mut text = String::new();
+        while is_code{
+            text += &self.line.clone().unwrap();
+            &self.consume();
+            is_code = Regex::new(r"\s*```(?= *\n| *$)").unwrap().is_match(self.line.clone().unwrap().as_str());
+        }
+        Token::CODE{lang: lang, text: text}
+    }
 
 }
