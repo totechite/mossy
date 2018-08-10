@@ -20,6 +20,6 @@ fn main(){
     let out = stdout();
     let mut out = BufWriter::new(out.lock());
 
-    writeln!(out, "{:?}", lexer.next_line()).unwrap()
+    writeln!(out, "{:#?}", lexer.next_line()).unwrap()
 
 }
