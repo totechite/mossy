@@ -9,7 +9,8 @@ pub mod token;
 use token::Token;
 pub mod lexer;
 use lexer::Lexer;
-
+pub mod parser;
+use parser::Parser;
 
 fn main(){
     let mut file = fs::File::open("sample.md").unwrap();
@@ -20,6 +21,6 @@ fn main(){
     let out = stdout();
     let mut out = BufWriter::new(out.lock());
 
-    writeln!(out, "{:#?}", lexer.next_line()).unwrap()
-
+    writeln!(out, "{:#?}", &lexer.exec()).unwrap();
+    writeln!(out, "{:?}", Parser::new(lexer.exec()).exec());
 }

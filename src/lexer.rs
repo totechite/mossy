@@ -21,7 +21,7 @@ impl Lexer {
         }
     }
 
-    pub fn consume(&mut self) -> &mut Lexer{
+    fn consume(&mut self) -> &mut Lexer{
             let mut temp: String = "".to_string();
             self.cursor.read_line(&mut temp);
             match temp.as_str(){
@@ -33,7 +33,7 @@ impl Lexer {
     
 
 
-    pub fn next_line(&mut self) -> Vec<Token>{
+    pub fn exec(&mut self) -> Vec<Token>{
         let mut tokens = vec![];
         while let Some(head_line) = self.line.clone(){
             if "\n" == head_line.as_str(){
@@ -45,7 +45,6 @@ impl Lexer {
                 tokens.push(Token::HEADING{depth: depth,text: text});
             }
             else if Regex::new(r"^\B(`{3})\B\s[\s\w]+\n$").unwrap().is_match(head_line.as_str()) {
-                println!("checked!!");
                 let lang: String = Regex::new(r"[\w[0-9]]+").unwrap().captures(head_line.as_str()).unwrap().get(0).unwrap().as_str().to_string();
                 self.consume();
                 let code_token: Token = self.code_token(lang);
