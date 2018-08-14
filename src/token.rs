@@ -2,12 +2,12 @@
 pub enum Token{
     N_A,
     EOF,
-    HEADING{depth: i8, text: String},
-    PARAGRAPH{text: String},
-    CODE{lang: String, text: String},
-    TEXT{text: String},
-    LIST_START{ordered: bool},
-    LIST_ITEM_START,
-    LIST_ITEM_END,
-    LIST_END
+    Heading{depth: i8, text: String},
+    Paragraph{text: String},
+    Code{lang: String, text: String},
+    Text{text: String},
+    ListStart{ordered: bool},
+    ListItemStart,
+    ListItemEnd,
+    ListEnd
 }

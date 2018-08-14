@@ -2,11 +2,9 @@ use std::fs;
 use std::io::{stdout, Write, BufWriter, prelude::*};
 
 extern crate regex;
-use regex::Regex;
 
 
 pub mod token;
-use token::Token;
 pub mod lexer;
 use lexer::Lexer;
 pub mod parser;
@@ -21,6 +19,6 @@ fn main(){
     let out = stdout();
     let mut out = BufWriter::new(out.lock());
 
-    writeln!(out, "{:#?}", &lexer.exec()).unwrap();
-    writeln!(out, "{:?}", Parser::new(lexer.exec()).exec());
+    // writeln!(out, "{:#?}", &lexer.exec()).unwrap();
+    writeln!(out, "{:?}", Parser::new(lexer.exec()).exec()).unwrap();
 }

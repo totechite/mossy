@@ -1,4 +1,3 @@
-use lexer::Lexer;
 use token::Token;
 
 #[derive(Debug)]
@@ -18,15 +17,22 @@ impl Parser {
         }
     }
 
-    pub fn exec(self) -> String{
-        let mut tokens = self.tokens.unwrap();
-        for token in tokens {
+    pub fn exec(mut self) -> String{
+        for token in self.tokens.unwrap() {
             match token{
-                Token::HEADING{depth, text} => {},
-                Token::PARAGRAPH{text} => {},
+                Token::Heading{depth, text} => {
+                    let s = format!("<h{}>{}</h{}>", depth, text, depth);
+                    self.parsed += &s;
+                },
+                Token::Paragraph{text} => {},
+                Token::Code{lang, text} => {
+                    let s = if &lang==&String::from(""){ "".to_string() }else{ format!(" class=\"{}\"", lang)  };
+                    let s = format!("<pre><code{}>{}</code></pre>", s, text);
+                    self.parsed += &s;
+                }
                 _ => {}
             }
         }
-        String::from("complete fn exec().")
+        self.parsed
     }
 }
