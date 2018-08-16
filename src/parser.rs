@@ -24,12 +24,15 @@ impl Parser {
                     let s = format!("<h{}>{}</h{}>", depth, text, depth);
                     self.parsed += &s;
                 },
-                Token::Paragraph{text} => {},
+                Token::Paragraph{text} => {
+                    let s = format!("<p>{}</p>", text);
+                    self.parsed += &s;
+                },
                 Token::Code{lang, text} => {
                     let s = if &lang==&String::from(""){ "".to_string() }else{ format!(" class=\"{}\"", lang)  };
                     let s = format!("<pre><code{}>{}</code></pre>", s, text);
                     self.parsed += &s;
-                }
+                },
                 _ => {}
             }
         }
