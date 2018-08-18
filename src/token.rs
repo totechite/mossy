@@ -1,4 +1,4 @@
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Token{
     N_A,
     EOF,
@@ -7,7 +7,6 @@ pub enum Token{
     Code{lang: String, text: String},
     Text{text: String},
     ListStart{ordered: bool},
-    ListItemStart,
-    ListItemEnd,
+    ListItem{text: String, task: bool, checked: bool},
     ListEnd
 }
