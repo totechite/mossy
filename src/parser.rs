@@ -1,6 +1,7 @@
 use token::Token;
+use regex::Regex;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Parser {
     point: usize,
     tokens: Option<Vec<Token>>,
@@ -18,11 +19,12 @@ impl Parser {
     }
 
     pub fn exec(mut self) -> String{
-        for token in self.tokens.unwrap() {
+        for token in self.clone().tokens.unwrap() {
             match token{
                 Token::Heading{depth, text} => {
+                    let text = self.clone().inline_parser(text);
                     let s = format!("<h{}>{}</h{}>", depth, text, depth);
-                    self.parsed += &s;
+                    self.parsed += s.as_str();
                 },
                 Token::Paragraph{text} => {
                     let s = format!("<p>{}</p>", text);
@@ -37,5 +39,20 @@ impl Parser {
             }
         }
         self.parsed
+    }
+
+    fn inline_parser(self, text: String) -> String{
+        if Regex::new(r"(`+)\b").unwrap().is_match(text.as_str()){
+            let f = Regex::new(r"\b?(`+)").unwrap().replace(text.as_str(), "<code>").to_string();
+            self.inline_parser(Regex::new(r"(`+)\b").unwrap().replace(f.as_str(), "</code>").to_string())
+        }else if Regex::new(r"[_*][[:alpha:]]+[_*]").unwrap().is_match(text.as_str()) {
+            let f = Regex::new(r"[_*]").unwrap().replace(text.as_str(), "<em>").to_string();
+            self.inline_parser(Regex::new(r"[_*]").unwrap().replace(f.as_str(), "</em>").to_string())
+        }else if Regex::new(r"[_*]{2}\w+[_*]{2}").unwrap().is_match(text.as_str()) {
+            let f = Regex::new(r"[(_*]{2}").unwrap().replace(text.as_str(), "<strong>").to_string();
+            self.inline_parser(Regex::new(r"[(_*]{2}").unwrap().replace(f.as_str(), "</strong>").to_string())
+        }else {
+            text
+        }
     }
 }

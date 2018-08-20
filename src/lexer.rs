@@ -39,7 +39,7 @@ impl Lexer {
             else if Regex::new(r"^(#{1,6})\s").unwrap().is_match(head_line.as_str()) {
                 let depth: i8 = Regex::new("#").unwrap().find_iter(head_line.as_str()).count() as i8;
                 let text: String = Regex::new("#").unwrap().replace_all(head_line.as_str(), "").trim().to_string();
-                tokens.push(Token::Heading{depth: depth,text: self.clone().inline_lexer(text)});
+                tokens.push(Token::Heading{depth: depth,text: text});
             }
             else if Regex::new(r"^\B([`\s\t]{3})").unwrap().is_match(head_line.as_str()) {
                 let mut find_lang: Option<_> = Regex::new(r"[\w[0-9]]+").unwrap().captures(head_line.as_str());
@@ -83,22 +83,6 @@ impl Lexer {
             &self.consume();
         }
         Token::Code{lang: lang, text: text}
-    }
-
-    fn inline_lexer(self, text: String) -> String{
-        if Regex::new(r"(`{3})\B\w+\B(`{3})").unwrap().is_match(text.as_str()){
-            let f = Regex::new(r"(`{2,3})\B").unwrap().replace(text.as_str(), "<code>").to_string();
-            Regex::new(r"\B(`{2,3})").unwrap().replace(f.as_str(), "</code>").to_string()
-        }else if false {
-            String::new()
-            // italic
-        }else if false {
-            String::new()
-
-            // strong
-        }else {
-            text
-        }
     }
 
 }
