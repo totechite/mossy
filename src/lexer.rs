@@ -43,7 +43,7 @@ impl Lexer {
             }
             else if Regex::new(r"^\B([`\s\t]{3})").unwrap().is_match(head_line.as_str()) {
                 let mut find_lang: Option<_> = Regex::new(r"[\w[0-9]]+").unwrap().captures(head_line.as_str());
-                let mut lang = String::new();
+                let mut lang: String = String::new();
                 if let Some(option) = find_lang{
                     lang = option.get(0).unwrap().as_str().to_string();
                 }else{
@@ -86,7 +86,7 @@ impl Lexer {
     }
 
     fn inline_lexer(self, text: String) -> String{
-        if Regex::new(r"(`{2,3})\B\w+\B(`{2,3})").unwrap().is_match(text.as_str()){
+        if Regex::new(r"(`{3})\B\w+\B(`{3})").unwrap().is_match(text.as_str()){
             let f = Regex::new(r"(`{2,3})\B").unwrap().replace(text.as_str(), "<code>").to_string();
             Regex::new(r"\B(`{2,3})").unwrap().replace(f.as_str(), "</code>").to_string()
         }else if false {
