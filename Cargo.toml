@@ -5,4 +5,3 @@ authors = ["totechite <yutan.h9@gmail.com>"]
 
 [dependencies]
 regex = "1"
-lazy_static = "1.1.0"

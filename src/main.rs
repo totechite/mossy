@@ -23,8 +23,8 @@ fn main() -> std::io::Result<()> {
     let mut lexer: Lexer = Lexer::new(contents);//gen tokens.
     let out = stdout();
     let mut out = BufWriter::new(out.lock());
-	let mut write_buffer = fs::File::create(Regex::new(r"(.md)$").unwrap().replace(&filepath.as_str(), ".html").trim().to_string())?;
 	let tokens: String = Parser::new(lexer.clone().exec()).exec();	//parse markdown_tokens to HTML.
+	let mut write_buffer = fs::File::create(Regex::new(r"(.md)$").unwrap().replace(&filepath.as_str(), ".html").trim().to_string())?;
 	write_buffer.write(&tokens.as_bytes());
 	writeln!(out, "{:#?}", lexer.clone().exec());
 	writeln!(out, "{:#?}" , Parser::new(lexer.exec()).exec()).unwrap();
