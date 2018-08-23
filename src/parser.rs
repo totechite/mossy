@@ -84,16 +84,23 @@ impl Parser {
     }
 
     fn inline_parser(self, text: String) -> String{
-        if Regex::new(r"(`+)\b").unwrap().is_match(text.as_str()){
-            let f = Regex::new(r"\b?(`+)").unwrap().replace(text.as_str(), "<code>").to_string();
-            self.inline_parser(Regex::new(r"(`+)\b").unwrap().replace(f.as_str(), "</code>").to_string())
+        if Regex::new(r"(`+)\B").unwrap().is_match(text.as_str()){
+            if Regex::new(r"`<\w+>`").unwrap().is_match(text.as_str()){
+                let e = Regex::new(r"`<\w+>`").unwrap().captures(text.as_str()).unwrap().get(0).unwrap().as_str();
+                let pat = Regex::new(r"\w+").unwrap().captures(e).unwrap().get(0).unwrap().as_str();
+                let replace_string: String = format!("&lt;{}&gt;", pat);
+                self.inline_parser(Regex::new(r"<\w+>").unwrap().replace(text.as_str(), replace_string.as_str()).to_string())
+            }else{
+                let f = Regex::new(r"\B(`+)").unwrap().replace(text.as_str(), "<code>").to_string();
+                self.inline_parser(Regex::new(r"(`+)\B").unwrap().replace(f.as_str(), "</code>").to_string())
+            }
         }else if Regex::new(r"[_*][[:word:]]+[_*]").unwrap().is_match(text.as_str()) {
             let f = Regex::new(r"[_*]").unwrap().replace(text.as_str(), "<em>").to_string();
             self.inline_parser(Regex::new(r"[_*]").unwrap().replace(f.as_str(), "</em>").to_string())
         }else if Regex::new(r"[_*]{2}\w+[_*]{2}").unwrap().is_match(text.as_str()) {
             let f = Regex::new(r"[(_*]{2}").unwrap().replace(text.as_str(), "<strong>").to_string();
-            self.inline_parser(Regex::new(r"[(_*]{2}").unwrap().replace(f.as_str(), "</strong>").to_string())        
-        }else {
+            self.inline_parser(Regex::new(r"[(_*]{2}").unwrap().replace(f.as_str(), "</strong>").to_string())
+        }else{
             text
         }
     }
