@@ -38,36 +38,36 @@ impl Parser {
             match token{
                 Token::Heading{ depth, text } => {
                     let text = self.clone().inline_parser(text.to_owned());
-                    let s = format!("<h{}>{}</h{}>", depth, text, depth);
+                    let s = format!("<h{}>{}</h{}>\n", depth, text, depth);
                     output += s.as_str();
                     self.next();
                 },
                 Token::Paragraph{ text } => {
-                    let text = self.clone().inline_parser(text.to_owned());
-                    let s = format!("<p>{}</p>", text);
+                    let text = self.clone().inline_parser(text.to_owned()).trim().to_string();
+                    let s = format!("<p>{}</p>\n", text);
                     output += s.as_str();
                     self.next();
                 },
                 Token::Code{lang, text} => {
                     let mut s = if lang.to_owned()==String::from(""){ String::from("") }else{ format!(" class=\"{}\"", lang)  };
-                    s = format!("<pre><code{}>{}</code></pre>", s, text);
+                    s = format!("<pre><code{}>\n{}\n</code></pre>\n", s, text);
                     output += s.as_str();
                     self.next();
                 },
                 Token::ListStart{ordered} => {
                     let list_parent: String = if ordered.to_owned() { String::from("ol") }else { String::from("ul")};
                     self.next();
-                    output+=format!("<{}>", &list_parent).as_str();
+                    output+=format!("<{}>\n", &list_parent).as_str();
                     let li_tags: String = String::new();
                     let mut is_inList: bool = true;
                     while is_inList{
                         match self.token.clone().unwrap() {
                             Token::ListItem{text, task, checked} => {
-                                output+=format!("<li>{}</li>", self.clone().inline_parser(text)).as_str();
+                                output+=format!("    <li>{}</li>\n", self.clone().inline_parser(text)).as_str();
                                 self.next();
                             },
                             Token::ListEnd => {
-                                output+=format!("</{}>", list_parent).as_str();
+                                output+=format!("</{}>\n", list_parent).as_str();
                                 is_inList = false;
                                 self.next();
                             },
@@ -97,9 +97,9 @@ impl Parser {
         }else if Regex::new(r"[_*][[:word:]]+[_*]").unwrap().is_match(text.as_str()) {
             let f = Regex::new(r"[_*]").unwrap().replace(text.as_str(), "<em>").to_string();
             self.inline_parser(Regex::new(r"[_*]").unwrap().replace(f.as_str(), "</em>").to_string())
-        }else if Regex::new(r"[_*]{2}\w+[_*]{2}").unwrap().is_match(text.as_str()) {
-            let f = Regex::new(r"[(_*]{2}").unwrap().replace(text.as_str(), "<strong>").to_string();
-            self.inline_parser(Regex::new(r"[(_*]{2}").unwrap().replace(f.as_str(), "</strong>").to_string())
+        }else if Regex::new(r"([_*]{2})[[[:punct:]]\w\W]+([_*]{2})").unwrap().is_match(text.as_str()) {
+            let f = Regex::new(r"[_*]{2}").unwrap().replace(text.as_str(), "<strong>").to_string();
+            self.inline_parser(Regex::new(r"[_*]{2}").unwrap().replace(f.as_str(), "</strong>").to_string())
         }else{
             text
         }
