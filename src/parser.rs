@@ -75,6 +75,17 @@ impl Parser {
                         }
                     }  
                 },
+                Token::BlockquoteStart => {
+                    self.next();
+                    match self.token.clone().unwrap(){
+                        Token::Paragraph{text} => {
+                            output+=format!("<blockquote>\n<p>{}</p>\n</blockquote>\n", text).as_str();
+                        },
+                        _ => {}
+                    };
+                    self.next();
+                    self.next();
+                },
                 _ => {
                     self.next();
                 }

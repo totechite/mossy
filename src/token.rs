@@ -8,5 +8,7 @@ pub enum Token{
     Text{text: String},
     ListStart{ordered: bool},
     ListItem{text: String, task: bool, checked: bool},
-    ListEnd
+    ListEnd,
+    BlockquoteStart,
+    BlockquoteEnd
 }

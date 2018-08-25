@@ -69,6 +69,24 @@ impl Lexer {
             else if Regex::new(r"^([0-9]+.)\s+[\W[[:punct:]]\w]").unwrap().is_match(head_line.as_str()) {
                 tokens.append(&mut self.list_token(true));
             }
+            //Blockquote
+            else if Regex::new(r"^>").unwrap().is_match(head_line.as_str()){
+                tokens.push(Token::BlockquoteStart);
+                let mut parags: String;
+                parags = Regex::new(r"\s{2,}$").unwrap().replace(Regex::new(r"\n$").unwrap().replace(Regex::new(r"^>+").unwrap().replace(head_line.as_str(), "").to_string().as_str(), "").to_string().as_str(), "\n").trim().to_string();
+                self.consume();
+                let mut frag = true;
+                while frag{
+                    if Regex::new(r"^>").unwrap().is_match(self.line.clone().unwrap().as_str()){
+                        parags += Regex::new(r"\s{2,}$").unwrap().replace(Regex::new(r"\n$").unwrap().replace(Regex::new(r"^>+").unwrap().replace(self.line.clone().unwrap().as_str(), "").to_string().as_str(), "").to_string().as_str(), "\n").trim();
+                        self.consume();
+                    }else{
+                        frag = false;
+                    };
+                };
+                tokens.push(Token::Paragraph{text: parags});
+                tokens.push(Token::BlockquoteEnd);
+            }
             // Paragraph
             else {
                 let text: String = Regex::new(r"\s{3}\n*?$").unwrap().replace_all(head_line.as_str(), "\n").to_string();
