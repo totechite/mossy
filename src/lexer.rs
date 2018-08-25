@@ -1,3 +1,6 @@
+#![feature(rc_unique)]
+
+use std::rc::Rc;
 use std::io::{BufRead, Cursor};
 use regex::Regex;
 use token::Token;
@@ -68,10 +71,21 @@ impl Lexer {
             }
             // Paragraph
             else {
-                let mut parags = String::new();
                 let text: String = Regex::new(r"\s{3}\n*?$").unwrap().replace_all(head_line.as_str(), "\n").to_string();
-                tokens.push(Token::Paragraph{text: text});
                 self.consume();
+                if let Some(line) = self.line.clone(){
+                    if Regex::new(r"^([=-]{2,})\n$").unwrap().is_match(line.as_str()){
+                        if Regex::new(r"^(={2,})\n$").unwrap().is_match(self.line.clone().unwrap().as_str()){
+                            tokens.push(Token::Heading{depth: 1, text: text});
+                            self.consume();
+                        }else{
+                            tokens.push(Token::Heading{depth: 2, text: text});
+                            self.consume();
+                        };
+                    }else{
+                        tokens.push(Token::Paragraph{text: text});
+                    };
+                };
             }
         }
         tokens.push(Token::EOF);

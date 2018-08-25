@@ -38,7 +38,7 @@ impl Parser {
             match token{
                 Token::Heading{ depth, text } => {
                     let text = self.clone().inline_parser(text.to_owned());
-                    let s = format!("<h{}>{}</h{}>\n", depth, text, depth);
+                    let s = format!("<h{}>{}</h{}>\n", depth, text.trim(), depth);
                     output += s.as_str();
                     self.next();
                 },
