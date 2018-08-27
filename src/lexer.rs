@@ -2,6 +2,7 @@
 
 use std::rc::Rc;
 use std::io::{BufRead, Cursor};
+use std::collections::HashMap;
 use regex::Regex;
 use token::Token;
 
@@ -100,10 +101,13 @@ impl Lexer {
                             tokens.push(Token::Heading{depth: 2, text: text});
                             self.consume();
                         };
-                    }else{
+                    }else {
                         tokens.push(Token::Paragraph{text: text});
-                    };
+                    }
+                }else{
+                    tokens.push(Token::Paragraph{text: text});
                 };
+
             }
         }
         tokens.push(Token::EOF);

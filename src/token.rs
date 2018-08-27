@@ -10,5 +10,6 @@ pub enum Token{
     ListItem{text: String, task: bool, checked: bool},
     ListEnd,
     BlockquoteStart,
-    BlockquoteEnd
+    BlockquoteEnd,
+    Table{header: Vec<String>, align: Vec<String>, cells: Vec<String>}
 }
