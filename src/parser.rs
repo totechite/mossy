@@ -5,6 +5,7 @@ use std::collections::HashMap;
 #[derive(Debug, Clone)]
 pub struct Parser {
     point: usize,
+    links: HashMap<String, String>,
     tokens: Vec<Token>,
     token: Option<Token>
 }
@@ -16,6 +17,7 @@ impl Parser {
         let token = tokens.clone().iter().nth(0).unwrap().to_owned();
         Parser{
             point: 0usize,
+            links: HashMap::new(),
             tokens: tokens,
             token: Some(token)
         }
@@ -34,6 +36,7 @@ impl Parser {
     }
 
     pub fn exec(&mut self) -> String{
+        self.links = self.clone().collecte_link();
         let mut output = String::new();
         while let Some(token) = self.token.clone() {
             match token{
