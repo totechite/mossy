@@ -2,7 +2,6 @@
 
 use std::rc::Rc;
 use std::io::{BufRead, Cursor};
-use std::collections::HashMap;
 use regex::Regex;
 use token::Token;
 

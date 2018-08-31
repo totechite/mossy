@@ -25,8 +25,8 @@ fn main() -> std::io::Result<()> {
     let mut out = BufWriter::new(out.lock());
 	let tokens: String = Parser::new(lexer.clone().exec()).exec();	//parse markdown_tokens to HTML.
 	let mut write_buffer = fs::File::create(Regex::new(r"(.md)$").unwrap().replace(&filepath.as_str(), ".html").trim().to_string())?;
-	write_buffer.write(&tokens.as_bytes());
+	write_buffer.write(&tokens.clone().as_bytes());
 	writeln!(out, "{:#?}", lexer.clone().exec());
-	writeln!(out, "{:#?}" , Parser::new(lexer.exec()).exec()).unwrap();
+	writeln!(out, "{:#?}" , tokens).unwrap();
 	Ok(())
 }

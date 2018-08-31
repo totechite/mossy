@@ -36,7 +36,7 @@ impl Parser {
     }
 
     pub fn exec(&mut self) -> String{
-        self.links = self.clone().collecte_link();
+        self.links = self.collecte_link();
         let mut output = String::new();
         while let Some(token) = self.token.clone() {
             match token{
@@ -62,7 +62,6 @@ impl Parser {
                     let list_parent: String = if ordered.to_owned() { String::from("ol") }else { String::from("ul")};
                     self.consume();
                     output+=format!("<{}>\n", &list_parent).as_str();
-                    let li_tags: String = String::new();
                     let mut is_inList: bool = true;
                     while is_inList{
                         match self.token.clone().unwrap() {
@@ -98,35 +97,39 @@ impl Parser {
         output.trim().to_string()
     }
 
-    fn collecte_link(self) -> HashMap<String, String>{
+    fn collecte_link(&mut self) -> HashMap<String, String>{
         let mut links: HashMap<String, String> = HashMap::new();
-        self.tokens.iter().map(|x|{
-            match x{
-                Token::Paragraph{text} => {
-                    if Regex::new(r"^\[(\w+)\]:\s+{0,}([\w\W]+)\s+{0,}[\w\s]+").unwrap().is_match(text.as_str()){
+        let mut link_len = vec![];
+        for (nums, token) in self.tokens.iter().enumerate() {
+            match token{
+                Token::Paragraph{ text } => {
+                    if Regex::new(r"\[(\w+)\]:\s*([\w\W[[:punct:]]]+)\s*\u0022([\w\W\s[[:punct:]]]+)\u0022\n?$").unwrap().is_match(text.as_str()){
+                        link_len.push(nums as usize);
                         let mut linkname: String = String::new();
-                        let text:String = Regex::new(r"^\[(\w+)\]:\s+{0,}([\w\W]+)\s+{0,}[\w\s]+").unwrap().replace(text.as_str(), |caps: &Captures| {
-                            linkname = caps.get(1).map_or("", |m| m.as_str()).to_string();
-                            match &caps.len(){
-                                2 => {
-                                    return format!("<a href={}>{}</a>", &caps[2].to_string(), &caps[1].to_string());
-                                },
-                                3 =>{
-                                    return format!("<a href={} title={}>{}</a>", &caps[2].to_string(), &caps[3].to_string(), &caps[1].to_string());
-                                },
-                                _ => {
-                                    return format!("<a href={}>{}</a>", &caps[2].to_string(), &caps[1].to_string());
-                                }
-                            }
+                        let text:String = Regex::new(r"^\[(\w+)\]:\s*([\w\W[[:punct:]]]+)\s*\u0022([\w\W\s[[:punct:]]]+)\u0022\n?$").unwrap().replace(text.as_str(), |caps: &Captures| {
+                            linkname = caps.get(1).map_or("", |m| m.as_str()).to_string().to_lowercase();
+                            return format!("<a href={} title={}>{}</a>", &caps[2].to_string(), &caps[3].to_string(), &caps[1].to_string());
                         }).to_string();
                         links.insert(linkname, text);
-                    };
+                    }else if Regex::new(r"\[(\w+)\]:\s*([\w\W[[:punct:]]]+)\s*\n?$").unwrap().is_match(text.as_str()){
+                        link_len.push(nums as usize);
+                        let mut linkname: String = String::new();
+                        let text:String = Regex::new(r"^\[(\w+)\]:\s*([\w\W[[:punct:]]]+)\s*\n?$").unwrap().replace(text.as_str(), |caps: &Captures| {
+                            linkname = caps.get(1).map_or("", |m| m.as_str()).to_string().to_lowercase();
+                            return format!("<a href={}>{}</a>", &caps[2].to_string(), &caps[1].to_string());
+                        }).to_string();
+                        links.insert(linkname, text);                        
+                    }
                 },
-                _ => {}
+                _ => { }
             };
-        });
+        };
+        link_len.reverse();
+        for num in link_len.iter() {
+            self.tokens.remove(*num);
+        };
+        println!("{:?}", &links);
         links
-
     }
 
     fn inline_parser(self, text: String) -> String{
@@ -146,6 +149,16 @@ impl Parser {
         }else if Regex::new(r"([_*]{2})[[[:punct:]]\w\W]+([_*]{2})").unwrap().is_match(text.as_str()) {
             let f = Regex::new(r"[_*]{2}").unwrap().replace(text.as_str(), "<strong>").to_string();
             self.inline_parser(Regex::new(r"[_*]{2}").unwrap().replace(f.as_str(), "</strong>").to_string())
+        }else if Regex::new(r"\[(\w+)\]\(([\w[[:punct:]]]+)\)").unwrap().is_match(text.as_str()) {
+            let f = Regex::new(r"\[(\w+)\]\(([\w[[:punct:]]]+)\)").unwrap().replace(text.as_str(), |caps: &Captures|{
+                return format!("<a href={}>{}</a>", &caps[2].to_string(), &caps[1].to_string());
+            });
+            self.inline_parser(f.to_string())
+        }else if Regex::new(r"\[(\w+)\]").unwrap().is_match(text.as_str()) {
+            let f = Regex::new(r"\[(\w+)\]").unwrap().replace(text.as_str(), |caps: &Captures|{
+                return format!("{}", self.links.get(&caps[1].to_string().to_lowercase()).unwrap());
+            });
+            self.inline_parser(f.to_string())
         }else{
             text
         }

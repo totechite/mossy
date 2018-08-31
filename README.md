@@ -1,12 +1,18 @@
-# mk.rs
-markdown_parser
+mk.rs
+================
+mini markdown parser
+
+## Specification
+It's supported [CommonMark](https://spec.commonmark.org/0.28/#link-label).   
 
 ## Supported Markdown syntaxes
-- Heading 
-- List 
-- Code-block
+- Heading
+- List
+- Code block
+- Link label
 
-and some inline-elements.(`<em>` `<strong>` `<code>`)
+and some inline-elements.
 
-## LICENSE
+LICENSE
+----------------
 MIT
