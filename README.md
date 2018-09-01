@@ -1,9 +1,9 @@
-mk.rs
+mossy
 ================
 mini markdown parser
 
 ## Specification
-It's supported [CommonMark](https://spec.commonmark.org/0.28/#link-label).   
+It's based [CommonMark](https://spec.commonmark.org/0.28/).   
 
 ## Supported Markdown syntaxes
 - Heading
