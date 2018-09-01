@@ -2,6 +2,7 @@
 name = "rust_md"
 version = "0.1.0"
 authors = ["totechite <yutan.h9@gmail.com>"]
+license = "MIT"
 
 [dependencies]
 regex = "1"

@@ -1,6 +1,3 @@
-#![feature(rc_unique)]
-
-use std::rc::Rc;
 use std::io::{BufRead, Cursor};
 use regex::Regex;
 use token::Token;

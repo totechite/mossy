@@ -1,6 +1,6 @@
 use std::fs;
 use std::env;
-use std::io::{stdout, stdin, Write, BufWriter, prelude::*};
+use std::io::{ Write, prelude::*};
 extern crate regex;
 use regex::Regex;
 
@@ -19,14 +19,10 @@ fn main() -> std::io::Result<()> {
     };
     let mut file = fs::File::open(&filepath.as_str()).unwrap();
     let mut contents = String::new();
-    file.read_to_string(&mut contents);
+    file.read_to_string(&mut contents)?;
     let mut lexer: Lexer = Lexer::new(contents);//gen tokens.
-    let out = stdout();
-    let mut out = BufWriter::new(out.lock());
-	let tokens: String = Parser::new(lexer.clone().exec()).exec();	//parse markdown_tokens to HTML.
+	let tokens: String = Parser::new(lexer.exec()).exec();	//parse markdown_tokens to HTML.
 	let mut write_buffer = fs::File::create(Regex::new(r"(.md)$").unwrap().replace(&filepath.as_str(), ".html").trim().to_string())?;
-	write_buffer.write(&tokens.clone().as_bytes());
-	writeln!(out, "{:#?}", lexer.clone().exec());
-	writeln!(out, "{:#?}" , tokens).unwrap();
+	write_buffer.write(&tokens.as_bytes())?;
 	Ok(())
 }

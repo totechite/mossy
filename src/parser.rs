@@ -103,20 +103,20 @@ impl Parser {
         for (nums, token) in self.tokens.iter().enumerate() {
             match token{
                 Token::Paragraph{ text } => {
-                    if Regex::new(r"\[(\w+)\]:\s*([\w\W[[:punct:]]]+)\s*\u0022([\w\W\s[[:punct:]]]+)\u0022\n?$").unwrap().is_match(text.as_str()){
+                    if Regex::new(r"^\[(\w+)\]:\s*([\w\W[[:punct:]]]+)\s*\u0022([\w\W\s[[:punct:]]]+)\u0022\n?$").unwrap().is_match(text.as_str()){
                         link_len.push(nums as usize);
                         let mut linkname: String = String::new();
-                        let text:String = Regex::new(r"^\[(\w+)\]:\s*([\w\W[[:punct:]]]+)\s*\u0022([\w\W\s[[:punct:]]]+)\u0022\n?$").unwrap().replace(text.as_str(), |caps: &Captures| {
+                        let text:String = Regex::new(r"^\[(\w+)\]:\s*([\w\W[[:punct:]]]+)\s+\u0022([\w\W\s[[:punct:]]]+)\u0022\n?$").unwrap().replace(text.as_str(), |caps: &Captures| {
                             linkname = caps.get(1).map_or("", |m| m.as_str()).to_string().to_lowercase();
-                            return format!("<a href={} title={}>{}</a>", &caps[2].to_string(), &caps[3].to_string(), &caps[1].to_string());
+                            return format!("<a href=\"{}\" title=\"{}\">{}</a>", &caps[2].trim().to_string(), &caps[3].to_string(), &caps[1].to_string());
                         }).to_string();
                         links.insert(linkname, text);
-                    }else if Regex::new(r"\[(\w+)\]:\s*([\w\W[[:punct:]]]+)\s*\n?$").unwrap().is_match(text.as_str()){
+                    }else if Regex::new(r"^\[(\w+)\]:\s*([\w\W[[:punct:]]]+)\s*\n?$").unwrap().is_match(text.as_str()){
                         link_len.push(nums as usize);
                         let mut linkname: String = String::new();
                         let text:String = Regex::new(r"^\[(\w+)\]:\s*([\w\W[[:punct:]]]+)\s*\n?$").unwrap().replace(text.as_str(), |caps: &Captures| {
                             linkname = caps.get(1).map_or("", |m| m.as_str()).to_string().to_lowercase();
-                            return format!("<a href={}>{}</a>", &caps[2].to_string(), &caps[1].to_string());
+                            return format!("<a href=\"{}\">{}</a>", &caps[2].trim().to_string(), &caps[1].to_string());
                         }).to_string();
                         links.insert(linkname, text);                        
                     }
@@ -128,11 +128,11 @@ impl Parser {
         for num in link_len.iter() {
             self.tokens.remove(*num);
         };
-        println!("{:?}", &links);
         links
     }
 
     fn inline_parser(self, text: String) -> String{
+        // Code
         if Regex::new(r"(`+)\B").unwrap().is_match(text.as_str()){
             if Regex::new(r"`<\w+>`").unwrap().is_match(text.as_str()){
                 let e = Regex::new(r"`<\w+>`").unwrap().captures(text.as_str()).unwrap().get(0).unwrap().as_str();
@@ -143,18 +143,40 @@ impl Parser {
                 let f = Regex::new(r"\B(`+)").unwrap().replace(text.as_str(), "<code>").to_string();
                 self.inline_parser(Regex::new(r"(`+)\B").unwrap().replace(f.as_str(), "</code>").to_string())
             }
-        }else if Regex::new(r"[_*][[:word:]]+[_*]").unwrap().is_match(text.as_str()) {
+        }
+        // Italic
+        else if Regex::new(r"[_*][[:word:]]+[_*]").unwrap().is_match(text.as_str()) {
             let f = Regex::new(r"[_*]").unwrap().replace(text.as_str(), "<em>").to_string();
             self.inline_parser(Regex::new(r"[_*]").unwrap().replace(f.as_str(), "</em>").to_string())
-        }else if Regex::new(r"([_*]{2})[[[:punct:]]\w\W]+([_*]{2})").unwrap().is_match(text.as_str()) {
+        }
+        // Bold
+        else if Regex::new(r"([_*]{2})[[[:punct:]]\w\W]+([_*]{2})").unwrap().is_match(text.as_str()) {
             let f = Regex::new(r"[_*]{2}").unwrap().replace(text.as_str(), "<strong>").to_string();
             self.inline_parser(Regex::new(r"[_*]{2}").unwrap().replace(f.as_str(), "</strong>").to_string())
-        }else if Regex::new(r"\[(\w+)\]\(([\w[[:punct:]]]+)\)").unwrap().is_match(text.as_str()) {
+        }
+        // Image 
+        else if Regex::new(r"!\[(\w+)\]\(\s*([\w\W[[:punct:]]]+)[\s\w\W[[:punct:]]]*\)").unwrap().is_match(text.as_str()){
+            let mut f: String;
+            if Regex::new(r"!\[(\w+)\]\(\s*([\w\W[[:punct:]]]+)\s+(\u0022[\w\W\s[[:punct:]]]+\u0022)?\s*\)").unwrap().is_match(text.as_str()) {
+                f = Regex::new(r"!\[(\w+)\]\(\s*([\w\W[[:punct:]]]+)\s+(\u0022[\w\W\s[[:punct:]]]+\u0022)\s*\)").unwrap().replace(text.as_str(), |caps: &Captures|{
+                        return format!("<img src=\"{}\" alt=\"{}\" title={}>", &caps[2].trim().to_string(), &caps[1].to_string(), &caps[3].to_string());
+                }).to_string();
+            }else {
+                f = Regex::new(r"!\[(\w+)\]\(\s*([\w\W[[:punct:]]]+)\s*\)").unwrap().replace(text.as_str(), |caps: &Captures|{
+                        return format!("<img src=\"{}\" alt=\"{}\">", &caps[2].trim().to_string(), &caps[1].to_string());
+                }).to_string();
+            }
+            self.inline_parser(f.to_string())
+        }
+        // Link label :defined at Inline 
+        else if Regex::new(r"\[(\w+)\]\(([\w[[:punct:]]]+)\)").unwrap().is_match(text.as_str()) {
             let f = Regex::new(r"\[(\w+)\]\(([\w[[:punct:]]]+)\)").unwrap().replace(text.as_str(), |caps: &Captures|{
-                return format!("<a href={}>{}</a>", &caps[2].to_string(), &caps[1].to_string());
+                return format!("<a href=\"{}\">{}</a>", &caps[2].to_string(), &caps[1].to_string());
             });
             self.inline_parser(f.to_string())
-        }else if Regex::new(r"\[(\w+)\]").unwrap().is_match(text.as_str()) {
+        }
+        // Link label :refarence
+        else if Regex::new(r"\[(\w+)\]").unwrap().is_match(text.as_str()) {
             let f = Regex::new(r"\[(\w+)\]").unwrap().replace(text.as_str(), |caps: &Captures|{
                 return format!("{}", self.links.get(&caps[1].to_string().to_lowercase()).unwrap());
             });
