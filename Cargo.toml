@@ -1,5 +1,5 @@
 [package]
-name = "rust_md"
+name = "mossy"
 version = "0.1.0"
 authors = ["totechite <yutan.h9@gmail.com>"]
 license = "MIT"
