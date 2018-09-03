@@ -3,6 +3,8 @@ name = "mossy"
 version = "0.1.0"
 authors = ["totechite <yutan.h9@gmail.com>"]
 license = "MIT"
+description = "Mini Markdown parser"
+repository = "https://github.com/totechite/mossy"
 
 [dependencies]
 regex = "1"
