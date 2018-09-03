@@ -7,42 +7,12 @@ use parser::Parser;
 #[derive(Debug)]
 pub struct Mossy {}
 
-///
-/// ## Examples
-///
-/// ```
-/// extern crate mossy;
-/// use mossy::Mossy;
-///
-/// let md_text: String = r"
-/// mossy
-/// ================
-/// Mini markdown parser
-///
-/// ## Specification
-/// It's based [CommonMark].   
-///
-/// ## Supported Markdown syntaxes
-/// - Heading
-/// - List
-/// - Code block
-/// - Link label
-///
-/// and some inline-elements.
-///
-/// LICENSE
-/// ----------------
-/// MIT
-///
-/// [CommonMark]: https://spec.commonmark.org/0.28/
-/// ";
-///
-/// let html: String = Mossy::new(md_text);
-/// 
-/// ```
-///
 
 impl Mossy {
+
+/// let md_text = "# I'm <h1> tag"
+/// let html: String = Mossy::new(String::from(md_text));
+
     pub fn new(markdown: String) -> String {
 	    let mut lexer: Lexer = Lexer::new(markdown);//gen tokens.
 		Parser::new(lexer.exec()).exec()	//parse markdown_tokens to HTML.
@@ -92,3 +62,4 @@ r#"[Rust](https://www.rust-lang.org)is a system programming language."#.to_strin
 r#"<p><a href="https://www.rust-lang.org">Rust</a>is a system programming language.</p>"#;
     assert_eq!(Mossy::new(md), html)
 }
+
