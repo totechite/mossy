@@ -16,7 +16,7 @@ extern crate mossy;
 ### Example
 ```rust
 extern crate mossy;
-use mossy::Mossy;
+use mossy::mossy::Mossy;
 
 let md_text = r"
 mossy
