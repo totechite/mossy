@@ -1,8 +1,46 @@
 use lexer::Lexer;
 use parser::Parser;
 
+/// Mini markdown parser.   
+/// Based specification is [CommonMark](https://spec.commonmark.org/0.28/).
+
 #[derive(Debug)]
 pub struct Mossy {}
+
+///
+/// ## Examples
+///
+/// ```
+/// extern crate mossy;
+/// use mossy::Mossy;
+///
+/// let md_text: String = r"
+/// mossy
+/// ================
+/// Mini markdown parser
+///
+/// ## Specification
+/// It's based [CommonMark].   
+///
+/// ## Supported Markdown syntaxes
+/// - Heading
+/// - List
+/// - Code block
+/// - Link label
+///
+/// and some inline-elements.
+///
+/// LICENSE
+/// ----------------
+/// MIT
+///
+/// [CommonMark]: https://spec.commonmark.org/0.28/
+/// ";
+///
+/// let html: String = Mossy::new(md_text);
+/// 
+/// ```
+///
 
 impl Mossy {
     pub fn new(markdown: String) -> String {
