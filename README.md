@@ -1,6 +1,6 @@
 mossy
 ================
-mini markdown parser
+Mini Markdown parser
 
 ## Specification
 It's based [CommonMark](https://spec.commonmark.org/0.28/).   
