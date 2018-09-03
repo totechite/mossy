@@ -1,7 +1,9 @@
-pub extern crate regex;
+extern crate regex;
 
-pub mod token;
+mod token;
 
-pub mod lexer;
+mod lexer;
 
-pub mod parser;
+mod parser;
+
+pub mod mossy;
