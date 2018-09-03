@@ -1,6 +1,6 @@
 #[derive(Debug, PartialEq, Clone)]
 pub enum Token{
-    N_A,
+    // N_A,
     EOF,
     Heading{depth: i8, text: String},
     Paragraph{text: String},

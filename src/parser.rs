@@ -66,7 +66,7 @@ impl Parser {
                     while is_inList{
                         match self.token.clone().unwrap() {
                             Token::ListItem{text, task, checked} => {
-                                output+=format!("    <li>{}</li>\n", self.clone().inline_parser(text)).as_str();
+                                output+=format!("<li>{}</li>\n", self.clone().inline_parser(text)).as_str();
                                 self.consume();
                             },
                             Token::ListEnd => {
