@@ -2,9 +2,12 @@
 name = "mossy"
 version = "0.1.1"
 authors = ["totechite <yutan.h9@gmail.com>"]
+
 license = "MIT"
 description = "A toy library for parsing and compiling Markdown."
 repository = "https://github.com/totechite/mossy"
+readme = "README.md"
+keywords = ["markdown"]
 
 [dependencies]
 regex = "1"
