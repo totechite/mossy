@@ -1,6 +1,7 @@
 mossy
 ================
-A toy library for parsing and compiling Markdown.
+A toy library for parsing and compiling Markdown.   
+[![Build Status](https://travis-ci.com/totechite/mossy.svg?branch=master)](https://travis-ci.com/totechite/mossy)
 
 ## Usage
 Add this to your `Cargo.toml`:   
