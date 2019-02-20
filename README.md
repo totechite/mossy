@@ -17,7 +17,7 @@ extern crate mossy;
 ### Example
 ```rust
 extern crate mossy;
-use mossy::mossy::Mossy;
+use mossy::Mossy;
 
 let md_text = r"
 mossy
@@ -32,9 +32,9 @@ LICENSE
 MIT
 
 [CommonMark]: https://spec.commonmark.org/0.28/
-";
+".to_string();
 
-let html: String = Mossy::new(String::from(md_text));
+let html: String = Mossy::new(md_text);
 
 ```
 

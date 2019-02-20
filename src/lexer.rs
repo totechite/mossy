@@ -1,6 +1,6 @@
-use std::io::{BufRead, Cursor};
 use regex::Regex;
-use token::Token;
+use std::io::{BufRead, Cursor};
+use crate::token::Token;
 
 #[derive(Debug, Clone)]
 pub struct Lexer {
