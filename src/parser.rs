@@ -1,6 +1,6 @@
+use crate::token::Token;
 use regex::{Captures, Regex};
 use std::collections::HashMap;
-use crate::token::Token;
 
 #[derive(Debug, Clone)]
 pub struct Parser {
@@ -73,8 +73,8 @@ impl Parser {
                     };
                     self.consume();
                     output += format!("<{}>\n", &list_parent).as_str();
-                    let mut is_inList: bool = true;
-                    while is_inList {
+                    let mut is_in_list: bool = true;
+                    while is_in_list {
                         match self.token.clone().unwrap() {
                             Token::ListItem {
                                 text,
@@ -88,10 +88,10 @@ impl Parser {
                             }
                             Token::ListEnd => {
                                 output += format!("</{}>\n", list_parent).as_str();
-                                is_inList = false;
+                                is_in_list = false;
                                 self.consume();
                             }
-                            _ => is_inList = false,
+                            _ => is_in_list = false,
                         }
                     }
                 }

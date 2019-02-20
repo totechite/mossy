@@ -1,6 +1,6 @@
+use crate::token::Token;
 use regex::Regex;
 use std::io::{BufRead, Cursor};
-use crate::token::Token;
 
 #[derive(Debug, Clone)]
 pub struct Lexer {
@@ -9,6 +9,7 @@ pub struct Lexer {
 }
 
 impl Lexer {
+    #[allow(unused_must_use)]
     pub fn new(src: String) -> Lexer {
         let mut cursor = Cursor::new(src);
         let mut buf = String::new();
@@ -19,6 +20,7 @@ impl Lexer {
         }
     }
 
+    #[allow(unused_must_use)]
     fn consume(&mut self) -> &mut Lexer {
         let mut temp: String = "".to_string();
         self.cursor.read_line(&mut temp);
@@ -28,7 +30,7 @@ impl Lexer {
         }
         self
     }
-
+    #[allow(unused_assignments)]
     pub fn exec(&mut self) -> Vec<Token> {
         let mut tokens = vec![];
         while let Some(head_line) = self.line.clone() {

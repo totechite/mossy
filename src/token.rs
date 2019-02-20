@@ -13,9 +13,6 @@ pub enum Token {
         lang: String,
         text: String,
     },
-    Text {
-        text: String,
-    },
     ListStart {
         ordered: bool,
     },
@@ -27,9 +24,4 @@ pub enum Token {
     ListEnd,
     BlockquoteStart,
     BlockquoteEnd,
-    Table {
-        header: Vec<String>,
-        align: Vec<String>,
-        cells: Vec<String>,
-    },
 }
