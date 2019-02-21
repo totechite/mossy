@@ -29,7 +29,6 @@
 //!
 //! ```
 
-
 extern crate regex;
 
 mod token;
@@ -45,13 +44,12 @@ pub use crate::parser::Parser;
 pub struct App {}
 
 impl App {
-
-/// ```
-/// # extern crate mossy;
-/// # use mossy::App;
-/// let md_text = "# I'm <h1> tag!";
-/// let html: String = App::exec(String::from(md_text));
-/// ```
+    /// ```
+    /// # extern crate mossy;
+    /// # use mossy::App;
+    /// let md_text = "# I'm <h1> tag!";
+    /// let html: String = App::exec(String::from(md_text));
+    /// ```
     pub fn exec(markdown: String) -> String {
         let mut lexer: Lexer = Lexer::new(markdown); //gen tokens.
         Parser::new(lexer.exec()).exec() //parse markdown_tokens to HTML.
