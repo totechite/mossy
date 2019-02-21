@@ -1,6 +1,6 @@
 extern crate mossy;
 
-use mossy::Mossy;
+use mossy::App;
 
 fn main() {
     let markdown_text = r"
@@ -19,5 +19,5 @@ MIT
 "
     .to_string();
 
-    println!("{}", Mossy::new(markdown_text));
+    println!("{}", App::exec(markdown_text));
 }

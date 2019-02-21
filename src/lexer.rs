@@ -193,19 +193,19 @@ impl Lexer {
         while Regex::new(r"^[-+*[0-9]+].?\s+[\W[[:punct:]]\w]")
             .unwrap()
             .is_match(self.line.clone().unwrap().as_str())
-        {
-            let text: String = Regex::new(r"^[-+*[0-9]+].?\s+")
-                .unwrap()
-                .replace_all(self.line.clone().unwrap().as_str(), "")
-                .trim()
-                .to_string();
-            stack.push(Token::ListItem {
-                text: text,
-                task: false,
-                checked: false,
-            });
-            self.consume();
-        }
+            {
+                let text: String = Regex::new(r"^[-+*[0-9]+].?\s+")
+                    .unwrap()
+                    .replace_all(self.line.clone().unwrap().as_str(), "")
+                    .trim()
+                    .to_string();
+                stack.push(Token::ListItem {
+                    text: text,
+                    task: false,
+                    checked: false,
+                });
+                self.consume();
+            }
         stack.push(Token::ListEnd);
         stack
     }

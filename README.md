@@ -34,7 +34,7 @@ MIT
 [CommonMark]: https://spec.commonmark.org/0.28/
 ".to_string();
 
-let html: String = Mossy::new(md_text);
+let html: String = App::exec(md_text);
 
 ```
 
