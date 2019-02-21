@@ -17,14 +17,14 @@ extern crate mossy;
 ### Example
 ```rust
 extern crate mossy;
-use mossy::Mossy;
+use mossy::App;
 
 let md_text = r"
 mossy
 ================
 A toy library for parsing Markdown.
 
-# Specification
+## Specification
 It's based [CommonMark].   
 
 LICENSE

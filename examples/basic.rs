@@ -8,7 +8,7 @@ mossy
 ================
 A toy library for parsing Markdown.
 
-# Specification
+## Specification
 It's based [CommonMark].
 
 LICENSE
