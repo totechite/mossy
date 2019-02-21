@@ -7,7 +7,7 @@ A toy library for parsing and compiling Markdown.
 Add this to your `Cargo.toml`:   
 ```toml
 [dependencies]
-mossy = "0.1.1"
+mossy = "0.1.2"
 ```
 and this to your crate root:   
 ```rust

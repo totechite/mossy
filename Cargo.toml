@@ -1,6 +1,6 @@
 [package]
 name = "mossy"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["totechite <yutan.h9@gmail.com>"]
 license = "MIT"
 description = "A toy library for parsing and compiling Markdown."
